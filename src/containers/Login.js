@@ -14,11 +14,7 @@ const Login = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const credentials = {
-      user: email,
-      password: password,
-    };
-    axios.post('http://kanbango.ru:5535/api/login', credentials)
+    axios.post('http://kanbango.ru:5535/api/login', {user: email, password: password})
     .then(response => {
       console.log(response);
     })
@@ -28,10 +24,11 @@ const Login = () => {
     <div className="Login">
       <Form onSubmit={handleSubmit}>
         <Form.Group size="lg" controlId="email">
+        
           <Form.Label>Email</Form.Label>
           <Form.Control
             autoFocus
-            type="email"
+            // type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
