@@ -9,6 +9,7 @@ jobs:
     machine: true
     resource_class: kireevroi/kanbango
     steps:
+      - run: ls
       - run: npm install
       - run: npm run build
   
