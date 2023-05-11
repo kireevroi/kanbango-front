@@ -1,35 +1,86 @@
 version: 2.1
-orbs:
-  node: circleci/node@4.7
-  codecov: codecov/codecov@1.0.2
+
 jobs:
-  build:
+  install:
     docker:
       - image: node:lts
-
-    working_directory: ~/repo
+    working_directory: /project
 
     steps:
       - checkout
-
+    
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
             - v1-dependencies-
-
       - run: npm install
-
+      - persist_to_workspace:
+          root: /
+          paths:
+            - project/node_modules
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
+  
+  test:
+    docker:
+      - image: node:lts
+    working_directory: /project
 
-      # run tests!
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /
       - run: npm run test
-      
+  
+  build:
+    docker:
+      - image: node:lts
+    working_directory: /project
+
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /
       - run: npm run build
+      - run: find . -not -path "./build*" -not -name "docker-compose.yml" -not -path "./nginx*" -delete
+      - persist_to_workspace:
+          root: /
+          paths:
+            - "project"
+  
+  deploy:
+    docker:
+      - image: alpine:latest
+    working_directory: /project
+    steps:
+      - attach_workspace:
+          at: /
+      - run: apk update
+      - run: apk add openssh
+      - run: mkdir -p /root/.ssh
+      - run: ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+      - run: 
+          name: Deploying Kanbango
+          command: |
+            scp -r build docker-compose.yml nginx $SSH_USER@$SSH_HOST:/home/$SSH_USER/
+      - run: ssh $SSH_USER@$SSH_HOST 'sudo docker compose restart'
 
-      - run: npm run test:coverage
-
-      - codecov/upload:
-          file: './coverage/clover.xml'
+workflows:
+  test-n-deploy:
+    jobs:
+      - install
+      - test:
+          requires:
+            - install
+      - build:
+          requires:
+            - test
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
