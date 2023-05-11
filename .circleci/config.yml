@@ -56,6 +56,8 @@ jobs:
           at: /
       - run: apk update
       - run: apk add openssh
+      - run: ls -la /root
+      - run: ls -la /root/.ssh
       - run: ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
       - run: 
           name: Deploying Kanbango
