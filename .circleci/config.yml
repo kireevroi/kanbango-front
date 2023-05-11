@@ -1,6 +1,5 @@
 version: 2.1
 
-# Define the jobs we want to run for this project
 jobs:
   install:
     working_directory: ~/project
@@ -21,7 +20,10 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
+      - run: pwd
+      - run: ls -la
       - run: npm run test
+
   build:
     machine: true
     resource_class: kireevroi/kanbango
