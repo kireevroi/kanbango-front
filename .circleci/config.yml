@@ -64,7 +64,7 @@ jobs:
       - run: 
           name: Deploying Kanbango
           command: |
-            scp -r build docker-compose.yml kanbango.conf $SSH_USER@$SSH_HOST:/home/$SSH_USER/
+            scp -r build docker-compose.yml nginx $SSH_USER@$SSH_HOST:/home/$SSH_USER/
 
 workflows:
   test-n-deploy:
