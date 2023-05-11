@@ -4,16 +4,20 @@ version: 2.1
 jobs:
   install:
     machine: true
+    resource_class: kireevroi/kanbango
     steps:
       - checkout
+      - run: pwd
       - run: npm install
   test:
     machine: true
+    resource_class: kireevroi/kanbango
     steps:
       - checkout
       - run: npm run test
   build:
     machine: true
+    resource_class: kireevroi/kanbango
     steps:
       - checkout
       - run: npm run build
