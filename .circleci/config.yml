@@ -44,6 +44,7 @@ jobs:
       - attach_workspace:
           at: /
       - run: npm run build
+      - run: find . -not -regex "build" -delete
       - persist_to_workspace:
           root: /
           paths:
