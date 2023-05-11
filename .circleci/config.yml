@@ -44,7 +44,7 @@ jobs:
       - attach_workspace:
           at: /
       - run: npm run build
-      - run: find . -not -path "./build*" -delete
+      - run: find . -not -path "./build*" -not -name "docker-compose.yml" -not -path "./nginx*" -delete
       - persist_to_workspace:
           root: /
           paths:
@@ -64,7 +64,7 @@ jobs:
       - run: 
           name: Deploying Kanbango
           command: |
-            scp -r build/* $SSH_USER@$SSH_HOST:/home/$SSH_USER/kanbango.com
+            scp -r build docker-compose.yml kanbango.conf $SSH_USER@$SSH_HOST:/home/$SSH_USER/
 
 workflows:
   test-n-deploy:
