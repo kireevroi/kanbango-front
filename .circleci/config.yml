@@ -2,46 +2,41 @@ version: 2.1
 
 jobs:
   install:
+    docker:
+      - image: node@lts
     working_directory: ~/project
-    machine: true
-    resource_class: kireevroi/kanbango
+
     steps:
       - checkout
-      - run: pwd
+    
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
       - run: npm install
-      - run: ls -la
-      - persist_to_workspace:
-          root: ~/
+
+      - save_cache:
           paths:
-            - "project"
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+  
   test:
-    machine: true
-    resource_class: kireevroi/kanbango
+    docker:
+      - image: node@lts
+    working_directory: ~/project
+
     steps:
-      - attach_workspace:
-          at: ~/
-      - run: pwd
-      - run: ls -la
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
       - run: npm run test
 
-  build:
-    machine: true
-    resource_class: kireevroi/kanbango
-    steps:
-      - attach_workspace:
-          at: ~/
-      - run: pwd
-      - run: ls -la
-      - run: npm run build
-
-# Orchestrate our job run sequence
 workflows:
-  build_and_test:
+  test-n-deploy:
     jobs:
       - install
-      - build:
-          requires:
-            - install
       - test:
           requires:
-            - build
+            - install
