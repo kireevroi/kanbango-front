@@ -2,13 +2,22 @@ version: 2.1
 workflows:
   testing:
     jobs:
-      - runner-test
+      - build
+      - test
 jobs:
-  runner-test:
+  build:
     machine: true
     resource_class: kireevroi/kanbango
     steps:
-      - run: echo "Hi I'm on Runners!"
+      - run: npm install
+      - run: npm run build
+  
+  test:
+    machine: true
+    resource_class: kireevroi/kanbango
+    steps:
+      - run: npm run test
+
 
 
 
