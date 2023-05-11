@@ -3,6 +3,7 @@ version: 2.1
 # Define the jobs we want to run for this project
 jobs:
   install:
+    working_directory: ~/project
     machine: true
     resource_class: kireevroi/kanbango
     steps:
@@ -10,18 +11,25 @@ jobs:
       - run: pwd
       - run: npm install
       - run: ls -la
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - "project"
   test:
     machine: true
     resource_class: kireevroi/kanbango
     steps:
-      - checkout
+      - attach_workspace:
+          at: ~/
       - run: npm run test
   build:
     machine: true
     resource_class: kireevroi/kanbango
     steps:
-      - checkout
+      - attach_workspace:
+          at: ~/
       - run: npm run build
+
 # Orchestrate our job run sequence
 workflows:
   build_and_test:
