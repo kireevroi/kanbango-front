@@ -3,7 +3,10 @@ workflows:
   testing:
     jobs:
       - build
-      - test
+      - test:
+        requires:
+          - build
+
 jobs:
   build:
     machine: true
