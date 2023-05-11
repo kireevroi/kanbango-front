@@ -54,8 +54,11 @@ jobs:
     steps:
       - attach_workspace:
           at: /
-      - run: ls -la
-      - run: pwd
+
+      - run: 
+          name: Deploying Kanbango
+          command: |
+            scp -r build $SSH_USER@SSH_HOST:/home/$SSH_USER/
 
 workflows:
   test-n-deploy:
