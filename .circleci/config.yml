@@ -30,6 +30,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
+      - run: pwd
+      - run: ls -la
       - run: npm run build
 
 # Orchestrate our job run sequence
