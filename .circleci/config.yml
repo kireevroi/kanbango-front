@@ -50,7 +50,7 @@ jobs:
   deploy:
     docker:
       - image: alpine:latest
-    working_directory: ~/project
+    working_directory: /project
     steps:
       - attach_workspace:
           at: /
