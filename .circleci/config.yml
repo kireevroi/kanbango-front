@@ -1,46 +1,60 @@
 version: 2.1
-orbs:
-  node: circleci/node@4.7
-  codecov: codecov/codecov@1.0.2
+workflows:
+  testing:
+    jobs:
+      - runner-test
 jobs:
-  build:
-    docker:
-      - image: node:lts
-    working_directory: ~/repo
+  runner-test:
+    machine: true
+    resource_class: kireevroi/kanbango
     steps:
-      - checkout
+      - run: echo "Hi I'm on Runners!"
 
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
 
-      - run: npm install
 
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+# version: 2.1
+# orbs:
+#   node: circleci/node@4.7
+#   codecov: codecov/codecov@1.0.2
+# jobs:
+#   build:
+#     docker:
+#       - image: node:lts
+#     working_directory: ~/repo
+#     steps:
+#       - checkout
 
-      # run tests!
-      - run: npm run test
+#       - restore_cache:
+#           keys:
+#             - v1-dependencies-{{ checksum "package.json" }}
+#             - v1-dependencies-
 
-      - run: npm run build
+#       - run: npm install
 
-      - store_artifacts:
-          path: ./build
+#       - save_cache:
+#           paths:
+#             - node_modules
+#           key: v1-dependencies-{{ checksum "package.json" }}
 
-      - run: npm run test:coverage
+#       # run tests!
+#       - run: npm run test
 
-      - codecov/upload:
-          file: './coverage/clover.xml'
+#       - run: npm run build
 
-  # deploy:
-  #   machine:
-  #     enabled: true
+#       - store_artifacts:
+#           path: ./build
 
-  #   steps:
-  #     - run:
-  #       name: Deploy to server
-  #       command: |
-  #       ssh $SSH_USER@$SSH_HOST ""
+#       - run: npm run test:coverage
+
+#       - codecov/upload:
+#           file: './coverage/clover.xml'
+
+#   # deploy:
+#   #   machine:
+#   #     enabled: true
+
+#   #   steps:
+#   #     - run:
+#   #       name: Deploy to server
+#   #       command: |
+#   #       ssh $SSH_USER@$SSH_HOST ""
