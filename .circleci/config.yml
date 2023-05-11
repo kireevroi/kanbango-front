@@ -4,7 +4,7 @@ jobs:
   install:
     docker:
       - image: node:lts
-    working_directory: ~/project
+    working_directory: /project
 
     steps:
       - checkout
@@ -14,7 +14,10 @@ jobs:
             - v1-dependencies-{{ checksum "package.json" }}
             - v1-dependencies-
       - run: npm install
-
+      - persist_to_workspace:
+          root: /
+          paths:
+            - "project"
       - save_cache:
           paths:
             - node_modules
@@ -23,15 +26,13 @@ jobs:
   test:
     docker:
       - image: node:lts
-    working_directory: ~/project
+    working_directory: /project
 
     steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-      - run: npm run test
+      - attach_workspace:
+          at: /project
+      - run: ls -la
+      - run: pwd
 
 workflows:
   test-n-deploy:
