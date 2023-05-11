@@ -17,7 +17,7 @@ jobs:
       - persist_to_workspace:
           root: /
           paths:
-            - "project"
+            - project/node_modules
       - save_cache:
           paths:
             - node_modules
@@ -29,6 +29,7 @@ jobs:
     working_directory: /project
 
     steps:
+      - checkout
       - attach_workspace:
           at: /
       - run: npm run test
@@ -39,6 +40,7 @@ jobs:
     working_directory: /project
 
     steps:
+      - checkout
       - attach_workspace:
           at: /
       - run: npm run build
@@ -56,8 +58,7 @@ jobs:
           at: /
       - run: apk update
       - run: apk add openssh
-      - run: ls -la /root
-      - run: ls -la /root/.ssh
+      - run: mkdir -p /root/.ssh
       - run: ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
       - run: 
           name: Deploying Kanbango
