@@ -42,8 +42,15 @@ jobs:
       - attach_workspace:
           at: /
       - run: npm run build
-      - store_artifacts:
-          path: /project/build
+  
+  deploy:
+    docker:
+      - image: alpine:latest
+    working_directory: ~/project
+    steps:
+      - attach_workspace:
+          at: /
+      - run: ls -la
 
 workflows:
   test-n-deploy:
@@ -55,3 +62,6 @@ workflows:
       - build:
           requires:
             - test
+      - deploy:
+          requires:
+            - build
