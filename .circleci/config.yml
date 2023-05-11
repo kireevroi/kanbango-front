@@ -9,6 +9,7 @@ jobs:
       - checkout
       - run: pwd
       - run: npm install
+      - run: ls -la
   test:
     machine: true
     resource_class: kireevroi/kanbango
