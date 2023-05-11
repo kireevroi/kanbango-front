@@ -54,7 +54,8 @@ jobs:
     steps:
       - attach_workspace:
           at: /
-
+      - run: apk update
+      - run: apk add openssh
       - run: 
           name: Deploying Kanbango
           command: |
