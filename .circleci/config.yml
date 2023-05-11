@@ -31,8 +31,19 @@ jobs:
     steps:
       - attach_workspace:
           at: /
-      - run: ls -la
-      - run: pwd
+      - run: npm run test
+  
+  build:
+    docker:
+      - image: node:lts
+    working_directory: /project
+
+    steps:
+      - attach_workspace:
+          at: /
+      - run: npm run build
+      - store_artifacts:
+          path: /project/build
 
 workflows:
   test-n-deploy:
@@ -41,3 +52,6 @@ workflows:
       - test:
           requires:
             - install
+      - build:
+          requires:
+            - test
