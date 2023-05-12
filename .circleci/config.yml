@@ -24,6 +24,12 @@ jobs:
       - codecov/upload:
           file: './coverage/clover.xml'
           token: $CODECOV_TOKEN
+      - run: find . -not -path "./build*" -not -name "docker-compose.yml" -not -path "./nginx*" -delete
+      - persist_to_workspace:
+          root: /
+          paths:
+            - "project"
+      
  
   deploy:
     docker:
