@@ -3,43 +3,6 @@ orbs:
   codecov: codecov/codecov@1.0.2
 
 jobs:
-  install:
-    docker:
-      - image: node:lts
-    working_directory: /project
-
-    steps:
-      - checkout
-    
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-      - run: npm install
-      - persist_to_workspace:
-          root: /
-          paths:
-            - project/node_modules
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-  
-  test:
-    docker:
-      - image: node:lts
-    working_directory: /project
-
-    steps:
-      - checkout
-      - attach_workspace:
-          at: /
-      - run: npm run test
-      - codecov/upload:
-          file: './coverage/clover.xml'
-          token: $CODECOV_TOKEN
-
-  
   build:
     docker:
       - image: node:lts
@@ -47,15 +10,21 @@ jobs:
 
     steps:
       - checkout
-      - attach_workspace:
-          at: /
-      - run: npm run build
-      - run: find . -not -path "./build*" -not -name "docker-compose.yml" -not -path "./nginx*" -delete
-      - persist_to_workspace:
-          root: /
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
+      - run: npm install
+      - save_cache:
           paths:
-            - "project"
-  
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run: npm run test
+      - run: npm run build
+      - codecov/upload:
+          file: './coverage/clover.xml'
+          token: $CODECOV_TOKEN
+ 
   deploy:
     docker:
       - image: alpine:latest
@@ -76,13 +45,7 @@ jobs:
 workflows:
   test-n-deploy:
     jobs:
-      - install
-      - test:
-          requires:
-            - install
-      - build:
-          requires:
-            - test
+      - build
       - deploy:
           requires:
             - build
