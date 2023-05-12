@@ -14,7 +14,7 @@ const Login = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    axios.post('http://kanbango.ru:5535/api/login', {user: email, password: password})
+    axios.post('https://kanbango.ru:5535/api/login', {user: email, password: password})
     .then(response => {
       console.log(response);
     })
