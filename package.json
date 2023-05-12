@@ -21,10 +21,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!axios)/\"",
-    "eject": "react-scripts eject",
-    "test:coverage": "cross-env CI=true npm test -- --env=jsdom --coverage",
-    "upload:test-report": "./node_modules/.bin/codecov"
+    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!axios)/\" --coverage",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
