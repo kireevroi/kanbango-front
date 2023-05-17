@@ -1,23 +1,37 @@
 import React, { useState } from "react";
-import axios from "axios";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import "./Login.css";
+import AuthService from "../services/auth.service";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const validateForm = () => {
     return email.length > 0 && password.length > 0;
   }
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    axios.post('https://kanbango.ru/api/login', {user: email, password: password})
-    .then(response => {
-      console.log(response);
-    })
+    setLoading(true);
+    AuthService.login(email, password).then(
+      () => {
+        navigate("/app");
+        // window.location.reload();
+      }, (error) => {
+        const resMessage =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+        setLoading(false);
+        console.log(resMessage);
+      }
+    )
   }
 
   return (
@@ -41,7 +55,10 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
-        <Button block="true" size="lg" type="submit" disabled={!validateForm()}>
+        <Button block="true" size="lg" type="submit" disabled={!validateForm() && loading}>
+          {loading && (
+                <span className="spinner-border spinner-border-sm"></span>
+              )}
           Login
         </Button>
       </Form>
